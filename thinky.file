@@ -1,0 +1,16 @@
+How do I want to process and search for keywords to document.
+
+(https://en.wikipedia.org/wiki/Lexical_analysis) <-- Useful information regarding how lexical analysis is implemented.
+
+Possible use of a FSM.
+
+FSM (Diagram)
+
+States {
+	Parse Text,
+	Tokenize,
+}
+
+Something to think... How does the readfile in file-system actually send data as a callback? What type is the data etc.
+
+Deal with the OOP Paradigm differently.

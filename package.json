@@ -1,0 +1,31 @@
+{
+  "name": "autodoc-gen",
+  "version": "1.0.0",
+  "description": "Automatically generate documentation for a program.",
+  "main": "autodoc.js",
+  "dependencies": {
+    "file-system": "2.x.x"
+  },
+  "scripts": {
+    "test": "node ./ test.cpp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicolsek/Autodoc-Generator.git"
+  },
+  "keywords": [
+    "autodoc",
+    "documentation",
+    "automatic",
+    "doc",
+    "generation",
+    "automatic",
+    "generation"
+  ],
+  "author": "Nicole Tusek",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nicolsek/Autodoc-Generator/issues"
+  },
+  "homepage": "https://github.com/nicolsek/Autodoc-Generator#readme"
+}

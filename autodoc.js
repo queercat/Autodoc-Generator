@@ -10,7 +10,7 @@ const flags = ["help", "--help", "--dev", "--v"]; //Flags that are valid to use.
 var devEnabled = false; //Is dev enabled then add debug stuff.
 var verboseEnabled = false; //Is the program set to do verbose stuff.
 var filePath; //What is the path to the file that documentation is currently being generated for.
-var path; //What is the path the user wants to write the doc to?
+var path = "./DOC.md"; //What is the path the user wants to write the doc to?
 
 /**
  * @description Checks the arguments to see if there are flags to enable and what path is being requested.
@@ -195,7 +195,7 @@ function removeInverseComments(data) {
 	}
 
 	if (verboseEnabled) {
-		console.log("Comments have been extracted!");
+		console.log("Comments have been isolated!");
 	}
 
 	/* Now that we're done with this portion we just need to process the comments */
@@ -204,12 +204,25 @@ function removeInverseComments(data) {
 
 /**
  * @description Process the comments with the function names and create a tree of comments in a sort of XML style format.
- * @param {*} comments the comments as an array.
- * @param {*} functionName  the functions as an array.
+ * @param {string[]} comments the comments as an array.
+ * @param {string[]} functionNames  the functions as an array.
  */
 function processComments(comments, functionNames) {
+	var lexemes = ["@description", "@param", "@return", "@localmember"];
+
+	/**
+	 * @localmemeber processComments
+	 * @description Get the description from a 
+	 * @param comment the comment we will be processing to get the description.
+	 * @return returns the description removed from the comemnt.
+	 */
+	getDescription = function(comment) {
+
+		return description;
+	}
+
 	for (functionDoc = 0; functionDoc < functionNames.length; functionDoc++) {
-		
+		var data = ""; //The data we will be sending to the doc.
 	}
 }
 

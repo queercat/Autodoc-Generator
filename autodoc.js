@@ -26,6 +26,7 @@ function checkArguments() {
 	}
 
 	/**
+	 * @localmember checkArguments
 	 * @description Check the flags of the program and see if there are any to activate.
 	 */
 	checkFlags = function() {
@@ -109,6 +110,7 @@ function processData(data) {
 	/* Local Members */
 	
 	/**
+	 * @localmember processData
 	 * @description Search a string for a substring and return it's index if it exists. If not return -1. 
 	 * @param {string} str the string to search.
 	 * @param {string} subStr the substring to search from the string.
@@ -120,6 +122,7 @@ function processData(data) {
 	}
 
 	/**
+	 * @localmember processData
 	 * @description Check if the index is valid.
 	 * @param {int} index the index to check if it's valid.
 	 * @return {boolean} if or if not the index exists in terms of searching a string.
@@ -152,7 +155,6 @@ function parseData(data) {
 /**
  * @description Read through the data and look for comments. 
  * @param {string} data the data itself that we're only extracting the comments from.
- * @return {string} the data with only the comments. 
  */
 function removeInverseComments(data) {
 	if (verboseEnabled) {
@@ -171,12 +173,44 @@ function removeInverseComments(data) {
 
 		data = data.slice(commentEnd + 2, data.length); //Remove that comment and keep reading.
 		
+		var functionStart = 0;
+		var functionEnd = data.indexOf(")"); //Get the end of the function line.
+
+		var functionLine = data.slice(functionStart, functionEnd);
+		var isFunction = functionLine.indexOf("function") !== - 1;
+
 		var functionName = "";
 
+		if (isFunction) {
+			if (functionLine.indexOf("= function") !== -1) {
+				functionName = functionLine.slice(0, functionLine.indexOf("=")).trim(); //If there is an (x) = function then get the [xFunction] = part.
+			} else {
+				functionName = functionLine.slice(functionLine.indexOf("function") + "function".length, functionLine.indexOf("(")).trim();
+			}
+
+			functionNames.push(functionName); //Push the function name.			
+		}
+	
 		data = data.slice(data.indexOf("{"), data.length); //Remove that function so we don't call it again.
 	}
 
-	return data;
+	if (verboseEnabled) {
+		console.log("Comments have been extracted!");
+	}
+
+	/* Now that we're done with this portion we just need to process the comments */
+	processComments(comments, functionNames);
+}
+
+/**
+ * @description Process the comments with the function names and create a tree of comments in a sort of XML style format.
+ * @param {*} comments the comments as an array.
+ * @param {*} functionName  the functions as an array.
+ */
+function processComments(comments, functionNames) {
+	for (functionDoc = 0; functionDoc < functionNames.length; functionDoc++) {
+		
+	}
 }
 
 /**

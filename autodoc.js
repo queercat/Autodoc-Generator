@@ -7,8 +7,8 @@ const args = process.argv.splice(2, process.argv.length); //The arguments for th
 const flags = ["help", "--help", "--dev", "--v"]; //Flags that are valid to use.
 
 /* Global Variables */
-var devEnabled; //Is dev enabled then add debug stuff.
-var verboseEnabled; //Is the program set to do verbose stuff.
+var devEnabled = false; //Is dev enabled then add debug stuff.
+var verboseEnabled = false; //Is the program set to do verbose stuff.
 var filePath; //What is the path to the file that documentation is currently being generated for.
 var path; //What is the path the user wants to write the doc to?
 
@@ -74,10 +74,12 @@ function displayUsage() {
 /**
  * @description Get the data from the file and return it.
  * @param {string} filepath the path to the file we will be processing to create documentation. 
- * @return {string} the data we will be returning from the file.
+ * @param {function} callback the function to call when we're done.
  */
-function getData(filepath) {
+function getData(filepath, callback) {
 	console.log("Getting data...");
+	var data;
+	
 	fs.readFile(filePath, encoding, (err, data) => {
 		if (err != null) {
 			failExit(err);
@@ -90,7 +92,9 @@ function getData(filepath) {
 			console.log("\n===========================================\n");
 		}
 
-		return data;
+		this.data = data; //Set the new data to old data.
+	
+		callback(data); //Now execute the function.
 	});
 }
 
@@ -101,11 +105,7 @@ function getData(filepath) {
 function processData(data) {
 	if (verboseEnabled) {
 		console.log("Processing Data...");
-	}
-
-	/* Local Variables */
-	const states = ["parse",]; //A simple FSM to run through what I have to do.
-	
+	}	
 	/* Local Members */
 	
 	/**
@@ -128,14 +128,7 @@ function processData(data) {
 		return index >= 0; //This exists because I'm lazy.
 	}
 
-	//For every state.
-	states.forEach(element => {
-		switch(element) {
-			case "parse":
-				data = parseData(data); //Parse the data, break it down into the only important bits and pieces.
-				break;
-		}
-	});
+	parseData(data); //Parse the data and only keep the important components.
 }
 
 /**
@@ -147,19 +140,41 @@ function parseData(data) {
 		console.log("Parsing Data...");
 	}
 	
-	/* Local Members */
-	const states = ["Remove Comments", "Get Descriptions"]; //The states that we want to process.
+	/* First we want to remove the comments from the file */
+	data = removeComments(data);
 
-	//For every state.
-	states.forEach(state => {
-		switch(state) {
-			case "Remove Comments":
-				data = removeComments(data); //Remove the comments as that can cause weirdness.
-				break;
-			case "Get Descriptions":
-				//data = getDescriptions(data); //Get the descriptions only.
-		}
-	});
+	/* Now we want to remove everything that is not inbetween two /** */
+	data = removeInverseComments(data); //Get it? Cause we're only leaving  the specific comments now. 
+
+	return data;
+}
+
+/**
+ * @description Read through the data and look for comments. 
+ * @param {string} data the data itself that we're only extracting the comments from.
+ * @return {string} the data with only the comments. 
+ */
+function removeInverseComments(data) {
+	if (verboseEnabled) {
+		console.log("Isolating Comments...");
+	}
+	
+	var comments = []; //The array we're going to push the comments to.w
+	var functionNames = [];
+
+	/* While there are still comments. */
+	while (data != "") {
+		var commentStart = data.indexOf("/**\r\n");
+		var commentEnd = data.indexOf("*/\r\n");
+
+		comments.push(data.slice(commentStart, commentEnd)); //Push the comment.
+
+		data = data.slice(commentEnd + 2, data.length); //Remove that comment and keep reading.
+		
+		var functionName = "";
+
+		data = data.slice(data.indexOf("{"), data.length); //Remove that function so we don't call it again.
+	}
 
 	return data;
 }
@@ -176,7 +191,7 @@ function removeComments(data) {
 
 	/* Comments that will be removed are (\/\*[^*].*) comments regEx(\/\/.*) and regEx(\/\*\*\*.*) */
 	const commentsRemove = /(\/\*[^*].*)|(\/\/.*)|(\/\*\*\*.*)/g;
-	//data = data.replace(commentsRemove, ""); //Remove the comments using the regEx.
+	data = data.replace(commentsRemove, ""); //Remove the comments using the regEx.
 
 	if (verboseEnabled) {
 		console.log("\nRemoved Comments")
@@ -201,6 +216,4 @@ function failExit(why) {
 }
 
 checkArguments(); //Check the arguments to see what is being argued ;)
-data = getData(filePath); //Get and process the data from the file.
-
-processData(data);
+getData(filePath, processData); //Get the data.

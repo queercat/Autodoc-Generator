@@ -7,7 +7,7 @@
     "file-system": "2.x.x"
   },
   "scripts": {
-    "test": "node ./ test.cpp"
+    "test": "node ./ test.js --dev --v"
   },
   "repository": {
     "type": "git",

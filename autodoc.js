@@ -1,122 +1,110 @@
-/* Node.js requirements */
-const args = process.argv.slice(2, process.argv.length); //Cut off the first two elements which are just the calls to the program and the name of the program itself.
-const fs = require('file-system');
+/* Node.js Requirements */
+const fs = require("file-system"); //Being used to grab the file and read it.
 
-/* Global Vars */
-const encodingType = "UTF-8"
-var functions = []; //The functions and their descriptors.
-var descriptors = [];
+/* Global Constants */
+const encoding = "UTF-8" //The file encoding type. 
+const args = process.argv.splice(2, process.argv.length); //The arguments for the program removed the programm call and stuff.
+const flags = ["help", "--help", "--dev", "--v"]; //Flags that are valid to use.
 
-if (args <= 0 || args.indexOf("help") != -1 || args.indexOf("--help") != -1) { //Checking to make sure that the arguments specified are valid.
-	displayUsage();
-	failExit();
-}
-
-/**
- * Read through a file specified with the encoding of encoding.
- * @param  {string} filename used to get the path of the file to read.
- * @param  {string} encoding the specific type of encoding when reading the file.
- */
-function readfile(filename, encoding) {
-	fs.readFile(filename, encoding, (err, data) => { //Read the file.
-		if (err != null) {
-			failExit(err);
-		}
-
-		processData(data);
-	});
-}
+/* Global Variables */
+var devEnabled; //Is dev enabled then add debug stuff.
+var verboseEnabled; //Is the program set to do verbose stuff.
+var filePath; //What is the path to the file that documentation is currently being generated for.
+var path; //What is the path the user wants to write the doc to?
 
 /**
- * @description Process the data of an assumed file stream.
- * @param {string} data the data being processed.
+ * @description Checks the arguments to see if there are flags to enable and what path is being requested.
  */
-function processData(data) {
-
-	data = removeComments(data); //Remove the comments from the program.
-
-	while (data.indexOf("/**") !== -1) { //While there still exists doc comments.
-		var commentStart = data.indexOf("/**"); //Get the start of the comment.
-		var commentEnd = data.indexOf("*/") + 2; //Get the end of the comment.
-
-		var doc = data.slice(commentStart + 3, commentEnd - 2); //Create the documentation block and remove the first /** structure and the last / structure.
-
-		var lines = [];
-
-		while (doc) {
-			lexPos = doc.indexOf("*");
-			var line = doc.slice(lexPos + 1, doc.indexOf("*", lexPos + 1)); //The line is is equal to the substr of the doc where * starts and the next * stars.
-			lines.push(line.trim());
-			doc = doc.slice(line.length + 1, doc.length);
-		}
-
-		lines.pop(); //Remove last element as for some reason weird issue with copying.
-
-		var name; //Name of the function.
-
-		data = data.slice(commentEnd + 2, data.length); //Remove the comment so we don't parse it again.
-
-		var functionStart = 0; //Get the start of where the function is.
-		var functionEnd = data.indexOf("{"); //Get the end of where the function is.
-
-		var functionLine = data.slice(functionStart, functionEnd).trim();
-
-		if (functionLine.indexOf("=") !== -1) {
-			name = functionLine.slice(0, functionLine.indexOf("=") - 1).trim();
-		} else {
-			name = functionLine.slice(functionLine.indexOf("function") + "function".length, functionLine.indexOf("(")).trim();
-		}
-
-		var data = data.slice(data.indexOf("/**"), data.length);
-
-		functions.push(name); //Push the names of the functions to the function array.
-		descriptors.push(lines); //Push the descriptors to the descriptors array.
-
-		createDocumentation();
+function checkArguments() {
+	if (args.length <= 0) { //If not valid amount of arguments.
+		displayUsage;
 	}
+
+	if (args[0].indexOf(".js") == -1) {
+		console.log("Invalid file-type, expecting a Javascript file!\n");
+		displayUsage();
+	}
+
+	/**
+	 * @description Check the flags of the program and see if there are any to activate.
+	 */
+	checkFlags = function() {
+		flags.forEach(flag => {
+			if (args.indexOf(flag) !== -1) {
+				switch(flag) {
+					case "help":
+						displayUsage;
+						break;
+					case "--help":
+						displayUsage;
+						break;
+					case "--dev":
+						devEnabled = true;
+						console.log("Developer mode enabled!");
+						break;
+					case "--v":
+						verboseEnabled = true;
+						console.log("Verbose mode enabled!");
+						break;
+				}
+			}
+		});
+	}
+
+	//Loop through flags and check if there are any to enable.
+	checkFlags();
+
+	//Set the path for the file.
+	filePath = args[0];
+	
+	//Set the path for the directory to write to.
+	path = args[1];
 }
-
-/**
- * Remove all comments from the input data.
- * @param {string} data the data being input.
- * @return {string} the data with the comments removed. 
- */
-function removeComments(data) {
-		var regEx = /(\/\/)|(\/\*[^*].*)|(\/\*\*\*.*).*|/g //Reg ex to remove comments. such as /* */ or // or even /********************************** */ just not /**
-		var regEx2 = /{([^}]+)}/g
-		data = data.replace(regEx, ''); //Remove all comments.
-		data = data.replace(regEx2, ''); //Remove all things inside braces.
-
-		console.log(data);
-
-		return data;
-}
-
-/**
- * Create the documentation.
- */
-function createDocumentation() {
-	console.log(functions);
-	console.log(descriptors);
-}		
 
 /**
  * @description Display usage information about the program.
  */
 function displayUsage() {
-	console.log("Usage Info... Add later.");
+	console.log("=== Usage Information ===");
+	console.log("example usage --> 'node autodoc.js <path_to_file> <optional_path_for_documentation> <optional_flags>'");
+	console.log("available flags --> 'help, --help, --dev, --v'");
+	failExit(); //Exit the program after displaying the usage info.
 }
 
 /**
- * @description Fail and exit the program after displaying the arguments of why.
- * @param {string / err} why optional 
+ * @description Get the data from the file and return it.
+ * @param {string} filepath the path to the file we will be processing to create documentation. 
+ * @return {string} the data we will be returning from the file.
  */
-function failExit(why) {
-	if (why != null) {
-		console.log(why);
-	}
+function getData(filepath) {
+	fs.readfile(filePath, (err, data) => {
+		if (err != null) {
+			failExit(err);
+		}
 
-	process.exit(-1);
+		if (verboseEnabled) {
+			console.log(data);
+		}
+
+		return data;
+	});
 }
 
-readfile(args[0], encodingType);
+function processData(data) {
+
+}
+
+/**
+ * @description Fail the program displaying the reason why and then exiting.
+ * @param {string / error} why the reason why the program failed in the form of a string or error.
+ */
+function failExit(why) {
+	if (why !== null) { //So that if you don't put anything in just exit silently.
+		console.log(why); //Display why the program has an error, etc...
+	}
+
+	process.exit(1); //Exit the program.
+}
+
+checkArguments(); //Check the arguments to see what is being argued ;)
+processData(getData(filePath)); //Get and process the data from the file.

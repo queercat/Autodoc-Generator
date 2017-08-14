@@ -77,21 +77,48 @@ function displayUsage() {
  * @return {string} the data we will be returning from the file.
  */
 function getData(filepath) {
-	fs.readfile(filePath, (err, data) => {
+	fs.readFile(filePath, encoding, (err, data) => {
 		if (err != null) {
 			failExit(err);
 		}
 
 		if (verboseEnabled) {
+			console.log("\nReading File...");
+			console.log("\n===========================================\n");
 			console.log(data);
+			console.log("\n===========================================\n");
 		}
 
 		return data;
 	});
 }
 
+/**
+ * @description Process the data given and evaluate it to determine lexemes and to tokenize later.
+ * @param {string} data the data to process. 
+ */
 function processData(data) {
+	/* Local Members */
+	
+	/**
+	 * @description Search a string for a substring and return it's index if it exists. If not return -1. 
+	 * @param {string} str the string to search.
+	 * @param {string} subStr the substring to search from the string.
+	 * @param {int} overload to overload the index starting point.
+	 * @return {int} returning the index if the substring exists in string, if not then it will return -1.
+	 */
+	searchString = function(str, subStr, overload) {
+		return str.indexOf(subStr, overload);	
+	}
 
+	/**
+	 * @description Check if the index is valid.
+	 * @param {int} index the index to check if it's valid.
+	 * @return {boolean} if or if not the index exists in terms of searching a string.
+	 */
+	isExist = function(index) {
+		return index >= 0; //This exists because I'm lazy.
+	}
 }
 
 /**

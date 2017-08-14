@@ -77,6 +77,7 @@ function displayUsage() {
  * @return {string} the data we will be returning from the file.
  */
 function getData(filepath) {
+	console.log("Getting data...");
 	fs.readFile(filePath, encoding, (err, data) => {
 		if (err != null) {
 			failExit(err);
@@ -98,6 +99,13 @@ function getData(filepath) {
  * @param {string} data the data to process. 
  */
 function processData(data) {
+	if (verboseEnabled) {
+		console.log("Processing Data...");
+	}
+
+	/* Local Variables */
+	const states = ["parse",]; //A simple FSM to run through what I have to do.
+	
 	/* Local Members */
 	
 	/**
@@ -119,6 +127,65 @@ function processData(data) {
 	isExist = function(index) {
 		return index >= 0; //This exists because I'm lazy.
 	}
+
+	//For every state.
+	states.forEach(element => {
+		switch(element) {
+			case "parse":
+				data = parseData(data); //Parse the data, break it down into the only important bits and pieces.
+				break;
+		}
+	});
+}
+
+/**
+ * @description Break down the bits and pieces of the data into only the significant parts for our purposes.
+ * @param {string} data 
+ */
+function parseData(data) {
+	if (verboseEnabled) {
+		console.log("Parsing Data...");
+	}
+	
+	/* Local Members */
+	const states = ["Remove Comments", "Get Descriptions"]; //The states that we want to process.
+
+	//For every state.
+	states.forEach(state => {
+		switch(state) {
+			case "Remove Comments":
+				data = removeComments(data); //Remove the comments as that can cause weirdness.
+				break;
+			case "Get Descriptions":
+				//data = getDescriptions(data); //Get the descriptions only.
+		}
+	});
+
+	return data;
+}
+
+/**
+ * @description Remove comments from the data.
+ * @param {string} data 
+ * @return {string} return data without the comments.
+ */
+function removeComments(data) {
+	if (verboseEnabled) {
+		console.log("Removing comments...");
+	}
+
+	/* Comments that will be removed are (\/\*[^*].*) comments regEx(\/\/.*) and regEx(\/\*\*\*.*) */
+	const commentsRemove = /(\/\*[^*].*)|(\/\/.*)|(\/\*\*\*.*)/g;
+	//data = data.replace(commentsRemove, ""); //Remove the comments using the regEx.
+
+	if (verboseEnabled) {
+		console.log("\nRemoved Comments")
+		console.log("\n===========================================\n");
+		console.log(data);
+		console.log("\n===========================================\n");
+	}
+
+	return data;
 }
 
 /**
@@ -134,4 +201,6 @@ function failExit(why) {
 }
 
 checkArguments(); //Check the arguments to see what is being argued ;)
-processData(getData(filePath)); //Get and process the data from the file.
+data = getData(filePath); //Get and process the data from the file.
+
+processData(data);

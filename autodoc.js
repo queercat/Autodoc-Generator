@@ -59,7 +59,9 @@ function checkArguments() {
 	filePath = args[0];
 	
 	//Set the path for the directory to write to.
-	path = args[1];
+	if (args[1] != "" && args[1] != null) {
+		path = args[1];		
+	}
 }
 
 /**
@@ -67,7 +69,7 @@ function checkArguments() {
  */
 function displayUsage() {
 	console.log("=== Usage Information ===");
-	console.log("example usage --> 'node autodoc.js <path_to_file> <optional_path_for_documentation> <optional_flags>'");
+	console.log("example usage --> 'node autodoc.js <path_to_file> <optional_filename_for_documentation> <optional_flags>'");
 	console.log("available flags --> 'help, --help, --dev, --v'");
 	failExit(); //Exit the program after displaying the usage info.
 }
@@ -208,22 +210,129 @@ function removeInverseComments(data) {
  * @param {string[]} functionNames  the functions as an array.
  */
 function processComments(comments, functionNames) {
-	var lexemes = ["@description", "@param", "@return", "@localmember"];
+	if (verboseEnabled) {
+		console.log("Processing comments...");
+	}
+	
+	var data = ""; //The data we will be sending to the doc.	
 
 	/**
-	 * @localmemeber processComments
-	 * @description Get the description from a 
-	 * @param comment the comment we will be processing to get the description.
-	 * @return returns the description removed from the comemnt.
+	 * @localmember processComments
+	 * @description Parse the comment specified and extract the description, parameter element, return element, and if it's a local memeber.
+	 * @param {string} comment the comment being parsed.
+	 * @param {string} name the name of the function being parsed.
+	 * @param {function} callback the callback to execute when done.
 	 */
-	getDescription = function(comment) {
+	parseInformation = function(comment, name, callback) {
+		/* Local Variables */
+		var desc = ""; 
+		var param = [];
+		var ret = "";
+		var local = false;
 
-		return description;
+		//TODO: Automate this with lexemes.
+		
+		/* Get local member */
+		local = (comment.indexOf("@local") !== -1);
+
+		/* Get description */
+		var descPosition = comment.indexOf("@desc");
+		var descPositionOther = comment.indexOf("@description");
+
+		if (descPosition !== -1) {
+			//TODO: Make this better using ternary operators.
+			if (descPositionOther !== -1) {
+				desc = comment.slice(descPositionOther + "@description".length, comment.indexOf("\r\n", descPosition)).trim();
+			} else {
+				desc = comment.slice(descPosition + "@desc".length, comment.indexOf("\r\n", descPosition)).trim();				
+			}
+
+		} else {
+			console.log("Warning! Unable to find function description for --> " + name);
+			console.log("You can surpress warnings by adding the flag --Supress or -W to the arguments");
+		}
+
+		/* Get return description */
+		var returnPosition = comment.indexOf("@ret");
+		var returnPositionOther = comment.indexOf("@return");
+
+		if (descPosition !== -1) {
+			//TODO: Make this better using ternary operators.
+			if (returnPositionOther !== -1) {
+				ret = comment.slice(returnPositionOther + "@return".length, comment.indexOf("\r\n", returnPosition)).trim();
+			} else {
+				ret = comment.slice(returnPosition + "@ret".length, comment.indexOf("\r\n", returnPosition)).trim();				
+			}
+		}
+
+		/* Get parameters */
+		while (comment.indexOf("@param") !== -1) {
+			var paramIndex = comment.indexOf("@param");
+			param.push(comment.slice(paramIndex + "@param".length, comment.indexOf("\r\n", paramIndex)).trim());
+
+			comment = comment.slice(comment.indexOf("\r\n", paramIndex) + 1, comment.length);
+		}
+
+		/* Write it to documentation */
+		callback(name, desc, param, local, ret);
 	}
 
 	for (functionDoc = 0; functionDoc < functionNames.length; functionDoc++) {
-		var data = ""; //The data we will be sending to the doc.
+		parseInformation(comments[functionDoc], functionNames[functionDoc], writeDoc); //Parse the information and send it a callback.
 	}
+}
+
+/**
+ * @description Write the documentation into the path specified.
+ * @param {string} desc description of the function.
+ * @param {string[]} param parameters of the function. 
+ * @param {bool} local if it's local then the description of to what function.
+ * @param {string} ret what it returns if it returns anything.
+ */
+function writeDoc(name, desc, param, local, ret) {
+	/* Local Variables */
+	var data = ""; //The data we will being writing.
+	
+	var highlightStart = "```javascript\n";
+	var highlightEnd = "```\n";
+
+	if (verboseEnabled) {
+		console.log("Processed comments!"); //Cause lazy and don't want to change callbacks.
+		console.log("Writing documentation...");
+	}
+
+	/* If it isn't a local function */
+	if (!local) {
+		data += "# " + name + "()\n" + "---" + "\n"; //The big header.
+	} else {
+		data += "## local " + name + "()\n"; //Medium header for local functions.
+	}
+
+	/* Adding the description */
+	data += desc + "\n"; //The description.
+
+	/* Adding the parameters */
+	param.forEach(val => {
+	});
+
+	/* Adding the return stuff */
+	if (ret != "") {
+		data += ret + "\n";
+	}
+
+	/**
+	 * @description Write to a file specified with the data specified.
+	 * @param {string} data the data to write.
+	 * @param {string} path the path to write to.
+	 */
+	writeToFile = function(data, path) {
+		var writeStream = fs.createWriteStream(path, {flags: 'a'});
+		writeStream.write(data);
+		writeStream.close();
+	}
+
+	/* Data is all done! Time to write */
+	writeToFile(data, path);
 }
 
 /**

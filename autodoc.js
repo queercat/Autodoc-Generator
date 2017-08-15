@@ -138,7 +138,7 @@ function processData(data) {
 
 /**
  * @description Break down the bits and pieces of the data into only the significant parts for our purposes.
- * @param {string} data 
+ * @param {string} data the data we'll be parsing.
  */
 function parseData(data) {
 	if (verboseEnabled) {
@@ -296,6 +296,40 @@ function writeDoc(name, desc, param, local, ret) {
 	var highlightStart = "```javascript\n";
 	var highlightEnd = "```\n";
 
+	var names = []; //The param names.
+	var types = []; //The param types.
+	var descriptions = []; //The param descriptions.
+
+	/* Adding the parameters */
+	param.forEach(val => {
+		var startName = val.indexOf("}");
+		var endName = val.indexOf(" ", startName + 2);
+
+		var startType = val.indexOf("{"); 
+
+		if (endName === -1) {
+			endName = val.indexOf("\n", startName);
+		}
+
+		if (startType !== -1 && startName !== -1) {
+			types.push(startType + 1, endName - 1); //Push the type.
+			descriptions.push(val.slice(startName + 2, val.length)); //Push the description.			
+			names.push(val.slice(startName + 2, endName + 1).trim()); //Push the name to the array.
+			
+		}
+	});
+
+	var paramStructure = ""; //The param's we're going to put in the function head.
+	if (names.length != 0) {
+		for (nam = 0; nam < names.length; nam++) {
+			if (nam != names.length - 1) {
+				paramStructure += names[nam] + ", ";
+			} else {
+				paramStructure += names[nam];
+			}
+		}
+	}
+
 	if (verboseEnabled) {
 		console.log("Processed comments!"); //Cause lazy and don't want to change callbacks.
 		console.log("Writing documentation...");
@@ -303,7 +337,7 @@ function writeDoc(name, desc, param, local, ret) {
 
 	/* If it isn't a local function */
 	if (!local) {
-		data += "# " + name + "()\n" + "\n"; //The big header.
+		data += "# " + name + "(" + paramStructure + ")\n" + "\n"; //The big header.
 	} else {
 		data += "## local " + name + "()\n"; //Medium header for local functions.
 	}
@@ -311,9 +345,14 @@ function writeDoc(name, desc, param, local, ret) {
 	/* Adding the description */
 	data += desc + "\n"; //The description.
 
-	/* Adding the parameters */
-	param.forEach(val => {
-	});
+	if (param != 0) {
+		data += "Param | Type | Description\n";
+		data += "--- | --- | ---\n";
+	}
+
+	for (elem = 0; elem < param.length; elem++) {
+		data += names[elem] + " | " + types[elem] + " | " + descriptions[elem] + "\n";
+	}
 
 	/* Adding the return stuff */
 	if (ret != "") {

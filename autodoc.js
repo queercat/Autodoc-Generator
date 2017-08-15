@@ -303,7 +303,7 @@ function writeDoc(name, desc, param, local, ret) {
 
 	/* If it isn't a local function */
 	if (!local) {
-		data += "# " + name + "()\n" + "---" + "\n"; //The big header.
+		data += "# " + name + "()\n" + "\n"; //The big header.
 	} else {
 		data += "## local " + name + "()\n"; //Medium header for local functions.
 	}

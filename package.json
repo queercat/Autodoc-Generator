@@ -7,7 +7,7 @@
     "file-system": "2.x.x"
   },
   "scripts": {
-    "test": "node ./ test.js --dev --v"
+    "test": "node ./autodoc.js ./testing/test.js ./testing/TESTOUT.md --dev --v"
   },
   "repository": {
     "type": "git",

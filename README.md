@@ -22,9 +22,18 @@
 
 ## Installation
 
+> Through NPM
+
 ```sh
 $ npm install --save autodoc-gen
 ```
+
+> Through Github
+```sh
+$ git clone https://github.com/nicolsek/Autodoc-Generator.git
+$ npm install
+```
+> Now autodoc-gen is ready to be used! (Just like me in all of my relationships ;'( )
 
 ## Usage
 

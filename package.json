@@ -1,6 +1,6 @@
 {
   "name": "autodoc-gen",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Automatically generate documentation for a Node.js program in a markup format.",
   "main": "autodoc.js",
   "dependencies": {

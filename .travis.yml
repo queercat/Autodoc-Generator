@@ -1,14 +1,12 @@
 language: node_js
 
 node_js:
+  - "5.3"
   - "4.1"
   - "4.0"
-  - "0.12"
 
 install:
   - npm install
 
 script:
   - npm test
-  - diff ./testing/EXPECTED.md ./testing/TESTOUT.md
-  - rm ./testing/TESTOUT.md

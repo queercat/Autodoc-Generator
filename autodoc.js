@@ -3,7 +3,7 @@ const fs = require("file-system"); //Being used to grab the file and read it.
 
 /* Global Constants */
 const encoding = "UTF-8" //The file encoding type. 
-const args = process.argv.splice(1, process.argv.length); //The arguments for the program removed the programm call and stuff.
+const args = process.argv.splice(2, process.argv.length); //The arguments for the program removed the programm call and stuff.
 const flags = ["help", "--help", "--dev", "--v"]; //Flags that are valid to use.
 
 /* Global Variables */
@@ -61,7 +61,6 @@ function checkArguments() {
 	//Set the path for the directory to write to.
 	if (args[1] != "" && args[1] != null) {
 		path = args[1];
-		console.log(args[1]);	
 	}
 }
 

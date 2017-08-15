@@ -38,7 +38,7 @@ $ node ./autodoc.js <PATH_TO_FILE> <OUTPUT.md> <OPTIONAL_FLAGS>
 ```
 
 > An example of this...
-[!alt text](http://prntscr.com/g8wum0)
+[!alt text](https://image.prntscr.com/image/QLRIp-U1QlyvahQEgfc6sA.png)
 
 ## License
 

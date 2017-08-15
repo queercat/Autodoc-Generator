@@ -29,14 +29,20 @@ Search a string for a substring and return it's index if it exists. If not retur
 | str | string | the string to search.|
 | subStr | string | the substring to search from the string.|
 | overload | int | to overload the index starting point.|
-{int} returning the index if the substring exists in string, if not then it will return -1.
+
+| Return Type | Description |
+| --- | --- |
+| int | returning the index if the substring exists in string, if not then it will return -1. |
 ## local isExist()
 Check if the index is valid.
 
 | Param | Type | Description |
 | --- | --- | ---
 | index | int | the index to check if it's valid.|
-{boolean} if or if not the index exists in terms of searching a string.
+
+| Return Type | Description |
+| --- | --- |
+| boolean | if or if not the index exists in terms of searching a string. |
 # parseData(data)
 
 Break down the bits and pieces of the data into only the significant parts for our purposes.
@@ -58,15 +64,7 @@ Process the comments with the function names and create a tree of comments in a 
 | Param | Type | Description |
 | --- | --- | ---
 | comments | string[] | the comments as an array.|
-| functionNames | string[] |  the functions as an array.|
-## local parseInformation()
-Parse the comment specified and extract the description, parameter element, return element, and if it's a local memeber.
-
-| Param | Type | Description |
-| --- | --- | ---
-| comment | string | the comment being parsed.|
-| name | string | the name of the function being parsed.|
-| callback | function | the callback to execute when done.|
+| functionNames | string[] | the functions as an array.|
 # writeDoc(desc, param, local, ret)
 
 Write the documentation into the path specified.
@@ -77,6 +75,14 @@ Write the documentation into the path specified.
 | param | string[] | parameters of the function.|
 | local | bool | if it's local then the description of to what function.|
 | ret | string | what it returns if it returns anything.|
+## local parseInformation()
+Parse the comment specified and extract the description, parameter element, return element, and if it's a local memeber.
+
+| Param | Type | Description |
+| --- | --- | ---
+| comment | string | the comment being parsed.|
+| name | string | the name of the function being parsed.|
+| callback | function | the callback to execute when done.|
 # writeToFile(data, path)
 
 Write to a file specified with the data specified.
@@ -92,7 +98,10 @@ Remove comments from the data.
 | Param | Type | Description |
 | --- | --- | ---
 |  | string | {string} data|
-{string} return data without the comments.
+
+| Return Type | Description |
+| --- | --- |
+| string | return data without the comments. |
 # failExit(why)
 
 Fail the program displaying the reason why and then exiting.

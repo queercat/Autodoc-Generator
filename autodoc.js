@@ -305,15 +305,15 @@ function writeDoc(name, desc, param, local, ret) {
 		var startName = val.indexOf("}");
 		var endName = val.indexOf(" ", startName + 2);
 
-		var startType = val.indexOf("{"); 
+		var startType = val.indexOf("{");
 
 		if (endName === -1) {
 			endName = val.indexOf("\n", startName);
 		}
 
 		if (startType !== -1 && startName !== -1) {
-			types.push(val.slice(startType + 1, startName)); //Push the type.
-			descriptions.push(val.slice(endName + 1, val.length)); //Push the description.			
+			types.push(val.slice(startType + 1, startName).trim()); //Push the type.
+			descriptions.push(val.slice(endName + 1, val.length).trim()); //Push the description.			
 			names.push(val.slice(startName + 2, endName + 1).trim()); //Push the name to the array.
 		}
 	});
@@ -355,7 +355,16 @@ function writeDoc(name, desc, param, local, ret) {
 
 	/* Adding the return stuff */
 	if (ret != "") {
-		data += ret + "\n";
+		data += "\n| Return Type | Description |\n";
+		data += "| --- | --- |\n";
+
+		var typeStart = ret.indexOf("{");
+		var typeEnd = ret.indexOf("}");
+
+		var type = ret.slice(typeStart + 1, typeEnd); //The type of the return
+		var description = ret.slice(typeEnd + 2, data.length); //The description of the return.
+
+		data += "| " + type + " | " + description + " |\n";
 	}
 
 	/**

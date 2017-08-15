@@ -384,7 +384,7 @@ function writeDoc(name, desc, param, local, ret) {
 
 /**
  * @description Remove comments from the data.
- * @param {string} data 
+ * @param {string} data the data recieved that we will be removing comments from. 
  * @return {string} return data without the comments.
  */
 function removeComments(data) {

@@ -80,7 +80,10 @@ function displayUsage() {
  * @param {function} callback the function to call when we're done.
  */
 function getData(filepath, callback) {
-	console.log("Getting data...");
+	if (verboseEnabled) {
+		console.log("Getting Data!");
+	}
+
 	var data;
 	
 	fs.readFile(filePath, encoding, (err, data) => {
@@ -230,8 +233,6 @@ function processComments(comments, functionNames) {
 		var ret = "";
 		var local = false;
 
-		//TODO: Automate this with lexemes.
-		
 		/* Get local member */
 		local = (comment.indexOf("@local") !== -1);
 
@@ -240,7 +241,6 @@ function processComments(comments, functionNames) {
 		var descPositionOther = comment.indexOf("@description");
 
 		if (descPosition !== -1) {
-			//TODO: Make this better using ternary operators.
 			if (descPositionOther !== -1) {
 				desc = comment.slice(descPositionOther + "@description".length, comment.indexOf("\r\n", descPosition)).trim();
 			} else {
@@ -257,7 +257,6 @@ function processComments(comments, functionNames) {
 		var returnPositionOther = comment.indexOf("@return");
 
 		if (descPosition !== -1) {
-			//TODO: Make this better using ternary operators.
 			if (returnPositionOther !== -1) {
 				ret = comment.slice(returnPositionOther + "@return".length, comment.indexOf("\r\n", returnPosition)).trim();
 			} else {
@@ -290,7 +289,6 @@ function processComments(comments, functionNames) {
  * @param {string} ret what it returns if it returns anything.
  */
 function writeDoc(name, desc, param, local, ret) {
-	/* Local Variables */
 	var data = ""; //The data we will being writing.
 	
 	var highlightStart = "```javascript\n";

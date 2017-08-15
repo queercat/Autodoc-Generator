@@ -312,10 +312,9 @@ function writeDoc(name, desc, param, local, ret) {
 		}
 
 		if (startType !== -1 && startName !== -1) {
-			types.push(startType + 1, endName - 1); //Push the type.
-			descriptions.push(val.slice(startName + 2, val.length)); //Push the description.			
+			types.push(val.slice(startType + 1, startName)); //Push the type.
+			descriptions.push(val.slice(endName + 1, val.length)); //Push the description.			
 			names.push(val.slice(startName + 2, endName + 1).trim()); //Push the name to the array.
-			
 		}
 	});
 
@@ -346,12 +345,12 @@ function writeDoc(name, desc, param, local, ret) {
 	data += desc + "\n"; //The description.
 
 	if (param != 0) {
-		data += "Param | Type | Description\n";
-		data += "--- | --- | ---\n";
+		data += "\n| Param | Type | Description |\n";
+		data += "| --- | --- | ---\n";
 	}
 
 	for (elem = 0; elem < param.length; elem++) {
-		data += names[elem] + " | " + types[elem] + " | " + descriptions[elem] + "\n";
+		data += "| " + names[elem] + " | " + types[elem] + " | " + descriptions[elem] + "|\n";
 	}
 
 	/* Adding the return stuff */

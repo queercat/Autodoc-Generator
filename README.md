@@ -1,4 +1,4 @@
-# autodoc-gen [![NPM version](https://badge.fury.io/js/autodoc-gen.svg)](https://npmjs.org/package/autodoc-gen) [[![Build Status](https://travis-ci.org/nicolsek/Autodoc-Generator.svg?branch=master)](https://travis-ci.org/nicolsek/Autodoc-Generator))](https://travis-ci.org/nicolsek/Autodoc-Generator)
+# autodoc-gen [![NPM version](https://badge.fury.io/js/autodoc-gen.svg)](https://npmjs.org/package/autodoc-gen) [[![Build Status](https://travis-ci.org/nicolsek/Autodoc-Generator.svg?branch=master)](https://travis-ci.org/nicolsek/Autodoc-Generator))]
 
 ## Introduction
 

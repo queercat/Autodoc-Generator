@@ -47,4 +47,4 @@ $ node ./autodoc.js <PATH_TO_FILE> <OUTPUT.md> <OPTIONAL_FLAGS>
 ```
 
 > An example of this...
-![alt text](https://image.prntscr.com/image/QLRIp-U1QlyvahQEgfc6sA.png)
+[link](https://github.com/queercat/Autodoc-Generator/blob/master/DOC.md)
